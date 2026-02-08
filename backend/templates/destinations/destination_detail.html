@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - Travel Planner{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'destinations:list' %}">Destinations</a></li>
+            <li class="breadcrumb-item active">{{ destination.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="card mb-4"
+                style="border: 2px solid var(--primary-black); border-radius: 12px; background: var(--pure-white);">
+                <div class="card-body p-4">
+                    <h1 class="mb-3" style="color: var(--primary-black); font-weight: 700;">
+                        <i class="bi bi-pin-map-fill"></i> {{ destination.name }}
+                    </h1>
+                    <h5 class="mb-4 text-muted">
+                        <i class="bi bi-flag"></i> {{ destination.country }}
+                    </h5>
+
+                    <div class="mb-4">
+                        <h4><i class="bi bi-info-circle"></i> About</h4>
+                        <p class="lead" style="color: var(--medium-gray); font-size: 1.1rem;">{{ destination.description
+                            }}</p>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div
+                                style="background: linear-gradient(135deg, var(--light-blue) 0%, rgba(124, 156, 191, 0.1) 100%); border-radius: 16px; padding: 1.5rem;">
+                                <h6 class="text-muted mb-2">
+                                    <i class="bi bi-cash-coin"></i> Average Budget
+                                </h6>
+                                <h3 class="mb-0" style="color: var(--primary-dark);">₹{{
+                                    destination.avg_budget|floatformat:0 }}</h3>
+                                <small class="text-muted">per trip (estimated)</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div
+                                style="background: linear-gradient(135deg, var(--light-blue) 0%, rgba(124, 156, 191, 0.1) 100%); border-radius: 16px; padding: 1.5rem;">
+                                <h6 class="text-muted mb-2">
+                                    <i class="bi bi-sun"></i> Best Season
+                                </h6>
+                                <h3 class="mb-0" style="color: var(--primary-dark);">{{ destination.best_season }}</h3>
+                                <small class="text-muted">to visit</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{% url 'itineraries:create' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-plus-circle"></i> Plan Trip to {{ destination.name }}
+                        </a>
+                        <a href="{% url 'ai-insights' destination.pk %}" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-stars"></i> AI Insights
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <a href="{% url 'users:login' %}" class="alert-link">Log in</a>
+                        to create an itinerary for this destination.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Weather Widget Sidebar -->
+        <div class="col-lg-4">
+            <div class="card mb-4"
+                style="border: 2px solid var(--primary-black); border-radius: 12px; background: var(--pure-white);">
+                <div class="card-header"
+                    style="background: var(--primary-black); color: var(--pure-white); border-bottom: 2px solid var(--primary-black); padding: 1rem; border-radius: 10px 10px 0 0;">
+                    <h5 class="mb-0" style="font-weight: 700;">
+                        <i class="bi bi-cloud-sun"></i> Current Weather
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if weather %}
+                    {% if weather.error %}
+                    <div class="alert mb-0"
+                        style="border: 1px solid var(--primary-black); background: #f8f9fa; border-radius: 8px; color: var(--text-color);">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <p class="mb-0">{{ weather.message }}</p>
+                    </div>
+                    {% else %}
+                    <div class="text-center mb-3">
+                        <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png"
+                            alt="{{ weather.description }}" class="weather-icon" style="filter: grayscale(100%);">
+                    </div>
+
+                    <h2 class="text-center mb-3" style="color: var(--primary-black); font-weight: 700;">
+                        {{ weather.temp }}°C
+                    </h2>
+
+                    <p class="text-center text-capitalize mb-4" style="color: var(--text-color);">
+                        <strong>{{ weather.description }}</strong>
+                    </p>
+
+                    <div class="row g-2 small">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background: #f8f9fa; border: 1px solid var(--light-gray);">
+                                <i class="bi bi-thermometer-half"></i> Feels like<br>
+                                <strong style="color: var(--text-color);">{{ weather.feels_like }}°C</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background: #f8f9fa; border: 1px solid var(--light-gray);">
+                                <i class="bi bi-droplet"></i> Humidity<br>
+                                <strong style="color: var(--text-color);">{{ weather.humidity }}%</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background: #f8f9fa; border: 1px solid var(--light-gray);">
+                                <i class="bi bi-wind"></i> Wind Speed<br>
+                                <strong style="color: var(--text-color);">{{ weather.wind_speed }} m/s</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background: #f8f9fa; border: 1px solid var(--light-gray);">
+                                <i class="bi bi-speedometer"></i> Pressure<br>
+                                <strong style="color: var(--text-color);">{{ weather.pressure }} hPa</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr style="border-color: var(--light-gray);">
+
+                    <p class="text-center small mb-0" style="color: var(--medium-gray);">
+                        <i class="bi bi-geo-alt"></i> {{ weather.city }}, {{ weather.country }}
+                    </p>
+                    {% endif %}
+                    {% else %}
+                    <div class="alert mb-0"
+                        style="border: 1px solid var(--primary-black); background: #f8f9fa; border-radius: 8px; color: var(--text-color);">
+                        <i class="bi bi-info-circle"></i> Weather data unavailable.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Quick Info -->
+            <div class="card"
+                style="border: 2px solid var(--primary-black); border-radius: 12px; background: var(--pure-white);">
+                <div class="card-header"
+                    style="background: var(--primary-black); color: var(--pure-white); border-bottom: 2px solid var(--primary-black); padding: 1rem; border-radius: 10px 10px 0 0;">
+                    <h6 class="mb-0" style="font-weight: 700;">
+                        <i class="bi bi-info-circle"></i> Quick Info
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2" style="color: var(--text-color);">
+                            <i class="bi bi-calendar-check"></i>
+                            <strong>Added:</strong> {{ destination.created_at|date:"M d, Y" }}
+                        </li>
+                        <li style="color: var(--text-color);">
+                            <i class="bi bi-pencil"></i>
+                            <strong>Updated:</strong> {{ destination.updated_at|date:"M d, Y" }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

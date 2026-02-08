@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Itinerary - Travel Planner{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> Confirm Deletion
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <strong>Warning:</strong> This action cannot be undone!
+                    </div>
+                    
+                    <p class="mb-3">Are you sure you want to delete the following itinerary?</p>
+                    
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ itinerary.title }}</h5>
+                            <p class="card-text mb-1">
+                                <i class="bi bi-pin-map"></i> <strong>Destination:</strong> {{ itinerary.destination.name }}
+                            </p>
+                            <p class="card-text mb-1">
+                                <i class="bi bi-calendar-event"></i> <strong>Start Date:</strong> {{ itinerary.start_date|date:"M d, Y" }}
+                            </p>
+                            <p class="card-text mb-0">
+                                <i class="bi bi-list-ol"></i> <strong>Day Plans:</strong> {{ itinerary.day_plans.count }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Yes, Delete Itinerary
+                            </button>
+                            <a href="{% url 'itineraries:detail' itinerary.pk %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,303 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Travel Planner{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Booking Interface Glassmorphism */
+    .booking-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        max-width: 900px;
+        margin: 3rem auto 0;
+    }
+
+    .booking-label {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .booking-input {
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1rem 1.2rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .booking-input:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(124, 156, 191, 0.1);
+    }
+
+    .feature-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--light-blue) 0%, rgba(124, 156, 191, 0.1) 100%);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover .feature-icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+    }
+
+    .card:hover .feature-icon-wrapper i {
+        color: white !important;
+    }
+
+    .feature-icon-wrapper i {
+        font-size: 2.5rem;
+        color: var(--primary-blue);
+        transition: all 0.3s ease;
+    }
+
+    .step-number {
+        width: 90px;
+        height: 90px;
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 8px 25px rgba(124, 156, 191, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .step-card:hover .step-number {
+        transform: scale(1.1);
+        box-shadow: 0 12px 35px rgba(124, 156, 191, 0.4);
+    }
+
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+        border-radius: 24px;
+        padding: 4rem 3rem;
+        box-shadow: 0 20px 60px rgba(124, 156, 191, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .cta-section h2,
+    .cta-section p {
+        color: white;
+        position: relative;
+        z-index: 1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Gradient -->
+<section class="hero-section">
+    <div class="container text-center">
+        <div class="mb-4 animate-fade-in">
+            <span class="badge"
+                style="background-color: rgba(255, 255, 255, 0.2); color: white; font-size: 0.85rem; padding: 0.6rem 1.5rem; font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.3);">
+                <i class="bi bi-stars"></i> AI-POWERED TRAVEL PLANNING
+            </span>
+        </div>
+        <h1 class="display-1 fw-bold mb-4 animate-fade-in" style="animation-delay: 0.1s;">
+            Explore Your Dream<br>Destinations
+        </h1>
+        <p class="lead mb-4 animate-fade-in" style="max-width: 700px; margin: 0 auto; animation-delay: 0.2s;">
+            Discover the world with intelligent itinerary planning, real-time weather insights,<br>
+            and personalized AI recommendations for unforgettable journeys.
+        </p>
+
+        <!-- Modern Booking Interface -->
+        <div class="booking-card animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="booking-label">Destination</label>
+                    <select class="form-select booking-input">
+                        <option selected>Choose destination</option>
+                        <option value="1">Paris, France</option>
+                        <option value="2">Tokyo, Japan</option>
+                        <option value="3">New York, USA</option>
+                        <option value="4">Bali, Indonesia</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="booking-label">Check-in</label>
+                    <input type="date" class="form-control booking-input">
+                </div>
+                <div class="col-md-3">
+                    <label class="booking-label">Check-out</label>
+                    <input type="date" class="form-control booking-input">
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'destinations:list' %}" class="btn btn-primary w-100" style="padding: 1rem;">
+                        <i class="bi bi-search"></i> Explore Now
+                    </a>
+                </div>
+            </div>
+
+            <div class="d-flex gap-3 justify-content-center flex-wrap mt-4 pt-3" style="border-top: 1px solid #e5e7eb;">
+                {% if user.is_authenticated %}
+                <a href="{% url 'ai-planner' %}" class="btn btn-gradient">
+                    <i class="bi bi-stars"></i> AI Itinerary Planner
+                </a>
+                <a href="{% url 'ai-assistant' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-robot"></i> Ask AI Assistant
+                </a>
+                {% else %}
+                <a href="{% url 'users:signup' %}" class="btn btn-gradient">
+                    <i class="bi bi-person-plus"></i> Get Started Free
+                </a>
+                <a href="{% url 'ai-assistant' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-robot"></i> Try AI Assistant
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="container my-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3">Why Choose Travel Planner?</h2>
+        <p class="text-muted fs-5" style="max-width: 600px; margin: 0 auto;">
+            Experience the future of travel planning with our AI-powered platform
+        </p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon-wrapper">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">AI Assistant</h5>
+                    <p class="card-text">
+                        Get instant travel recommendations powered by advanced AI. Ask anything about destinations!
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon-wrapper">
+                        <i class="bi bi-stars"></i>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">Smart Itineraries</h5>
+                    <p class="card-text">
+                        AI-generated day-by-day plans tailored to your interests and travel style.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon-wrapper">
+                        <i class="bi bi-cloud-sun"></i>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">Live Weather</h5>
+                    <p class="card-text">
+                        Check real-time weather conditions for any destination to plan your trip perfectly.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon-wrapper">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">Organized Plans</h5>
+                    <p class="card-text">
+                        Keep all your travel plans organized in one place with detailed day-wise activities.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5" style="background-color: var(--off-white);">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">How It Works</h2>
+            <p class="text-muted fs-5">Start planning your perfect trip in four simple steps</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3 text-center step-card">
+                <div class="step-number">1</div>
+                <h5 class="fw-bold mb-2">Sign Up</h5>
+                <p class="text-muted mb-0">Create your free account in seconds</p>
+            </div>
+            <div class="col-md-6 col-lg-3 text-center step-card">
+                <div class="step-number">2</div>
+                <h5 class="fw-bold mb-2">Browse Destinations</h5>
+                <p class="text-muted mb-0">Explore destinations and check weather</p>
+            </div>
+            <div class="col-md-6 col-lg-3 text-center step-card">
+                <div class="step-number">3</div>
+                <h5 class="fw-bold mb-2">Create Itinerary</h5>
+                <p class="text-muted mb-0">Plan your trip day by day</p>
+            </div>
+            <div class="col-md-6 col-lg-3 text-center step-card">
+                <div class="step-number">4</div>
+                <h5 class="fw-bold mb-2">Enjoy Your Trip</h5>
+                <p class="text-muted mb-0">Travel with confidence and ease</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+{% if not user.is_authenticated %}
+<section class="container my-5 py-5">
+    <div class="cta-section text-center">
+        <h2 class="display-5 fw-bold mb-4">Ready to Plan Your Next Adventure?</h2>
+        <p class="lead mb-5" style="max-width: 700px; margin: 0 auto;">
+            Join thousands of travelers who trust Travel Planner for their journey planning.
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'users:signup' %}" class="btn btn-light btn-lg">
+                <i class="bi bi-person-plus"></i> Sign Up Now
+            </a>
+            <a href="{% url 'users:login' %}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-box-arrow-in-right"></i> Already have an account?
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

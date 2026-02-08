@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - Travel Planner{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'itineraries:list' %}">My Itineraries</a></li>
+            <li class="breadcrumb-item active">{{ itinerary.title }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Itinerary Header -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h1 class="mb-2">
+                                <i class="bi bi-journal-text text-primary"></i> {{ itinerary.title }}
+                            </h1>
+                            <h5 class="text-muted">
+                                <i class="bi bi-pin-map"></i> {{ itinerary.destination.name }}, {{ itinerary.destination.country }}
+                            </h5>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'itineraries:edit' itinerary.pk %}">
+                                    <i class="bi bi-pencil"></i> Edit Itinerary
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{% url 'itineraries:delete' itinerary.pk %}">
+                                    <i class="bi bi-trash"></i> Delete Itinerary
+                                </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="bg-light p-3 rounded">
+                                <small class="text-muted d-block"><i class="bi bi-calendar-event"></i> Start Date</small>
+                                <strong>{{ itinerary.start_date|date:"M d, Y" }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="bg-light p-3 rounded">
+                                <small class="text-muted d-block"><i class="bi bi-calendar-check"></i> End Date</small>
+                                <strong>{{ itinerary.end_date|date:"M d, Y" }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="bg-light p-3 rounded">
+                                <small class="text-muted d-block"><i class="bi bi-clock"></i> Duration</small>
+                                <strong>{{ itinerary.days }} day{% if itinerary.days > 1 %}s{% endif %}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Day Plans -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-ol"></i> Day-wise Plans
+                    </h5>
+                    <a href="{% url 'itineraries:dayplan-create' itinerary.pk %}" class="btn btn-light btn-sm">
+                        <i class="bi bi-plus-circle"></i> Add Day Plan
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    {% if day_plans %}
+                        <div class="list-group list-group-flush">
+                            {% for day_plan in day_plans %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <h5 class="mb-2">
+                                                <span class="badge bg-primary">Day {{ day_plan.day_number }}</span>
+                                            </h5>
+                                            <p class="mb-2" style="white-space: pre-wrap;">{{ day_plan.plan }}</p>
+                                            <small class="text-muted">
+                                                <i class="bi bi-clock"></i> Updated: {{ day_plan.updated_at|date:"M d, Y H:i" }}
+                                            </small>
+                                        </div>
+                                        <div class="dropdown ms-3">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                <i class="bi bi-three-dots"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item" href="{% url 'itineraries:dayplan-edit' day_plan.pk %}">
+                                                    <i class="bi bi-pencil"></i> Edit
+                                                </a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item text-danger" href="{% url 'itineraries:dayplan-delete' day_plan.pk %}">
+                                                    <i class="bi bi-trash"></i> Delete
+                                                </a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center p-5">
+                            <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                            <h5 class="mt-3">No day plans yet</h5>
+                            <p class="text-muted">Start planning your trip day by day!</p>
+                            <a href="{% url 'itineraries:dayplan-create' itinerary.pk %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Add Your First Day Plan
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Destination Info -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-info-circle"></i> Destination Info
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <h6>{{ itinerary.destination.name }}</h6>
+                    <p class="small mb-2">{{ itinerary.destination.description|truncatewords:20 }}</p>
+                    <div class="mb-2">
+                        <span class="badge bg-info text-dark">
+                            <i class="bi bi-cash-coin"></i> ₹{{ itinerary.destination.avg_budget|floatformat:0 }}
+                        </span>
+                        <span class="badge bg-success">
+                            <i class="bi bi-sun"></i> {{ itinerary.destination.best_season }}
+                        </span>
+                    </div>
+                    <a href="{% url 'destinations:detail' itinerary.destination.pk %}" class="btn btn-sm btn-outline-primary w-100">
+                        <i class="bi bi-eye"></i> View Destination
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-graph-up"></i> Quick Stats
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="bi bi-list-check text-primary"></i>
+                            <strong>Day Plans:</strong> {{ day_plans.count }} of {{ itinerary.days }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-calendar-plus text-primary"></i>
+                            <strong>Created:</strong> {{ itinerary.created_at|date:"M d, Y" }}
+                        </li>
+                        <li>
+                            <i class="bi bi-pencil text-primary"></i>
+                            <strong>Last Updated:</strong> {{ itinerary.updated_at|date:"M d, Y" }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Travel Planner{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Soft, Elegant Color Palette */
+            --primary-blue: #7c9cbf;
+            --primary-dark: #4a5f7f;
+            --accent-gold: #d4af37;
+            --soft-gray: #8b95a5;
+            --light-blue: #e0f2fe;
+            --cream: #faf8f5;
+            --off-white: #f8f9fa;
+            --pure-white: #ffffff;
+            --text-dark: #2c3e50;
+            --text-muted: #6c757d;
+            --overlay-dark: rgba(44, 62, 80, 0.7);
+            --overlay-light: rgba(255, 255, 255, 0.95);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--cream);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.7;
+            font-weight: 400;
+        }
+        
+        /* Elegant Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: var(--text-dark);
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+        }
+        
+        /* Modern Navbar with Transparency */
+        .navbar {
+            background: rgba(255, 255, 255, 0.98) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(124, 156, 191, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-dark) !important;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand:hover {
+            color: var(--primary-blue) !important;
+        }
+        
+        .navbar-brand i {
+            font-size: 1.3rem;
+            margin-right: 0.5rem;
+            color: var(--accent-gold);
+        }
+        
+        .nav-link {
+            color: var(--text-dark) !important;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            padding: 0.6rem 1.2rem !important;
+            margin: 0 0.2rem;
+            border-radius: 8px;
+            letter-spacing: 0.3px;
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0.3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--accent-gold);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-blue) !important;
+            background-color: rgba(124, 156, 191, 0.08);
+        }
+        
+        .nav-link:hover::after {
+            width: 60%;
+        }
+        
+        .nav-link i {
+            margin-right: 0.4rem;
+            font-size: 1rem;
+        }
+        
+        main {
+            flex: 1;
+        }
+        
+        /* Hero Section with Gradient Background */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            position: relative;
+            color: var(--pure-white);
+            padding: 8rem 0 6rem;
+            margin-bottom: 0;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(124, 156, 191, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .hero-section .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--pure-white);
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero-section .lead {
+            font-weight: 400;
+            opacity: 0.95;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        /* Modern Card Components */
+        .card {
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+            background-color: var(--pure-white);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            height: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(124, 156, 191, 0.25);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+            border: none;
+            font-weight: 600;
+            color: var(--pure-white);
+            padding: 1.2rem 1.5rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+        }
+        
+        .card-body {
+            padding: 2rem 1.5rem;
+        }
+        
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        
+        .card-text {
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+        
+        /* Weather Widget */
+        .weather-widget {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+            color: var(--pure-white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(124, 156, 191, 0.3);
+        }
+        
+        .weather-icon {
+            font-size: 3.5rem;
+            opacity: 0.9;
+        }
+        
+        /* Modern Footer */
+        footer {
+            background: linear-gradient(135deg, var(--text-dark) 0%, var(--primary-dark) 100%);
+            color: var(--pure-white);
+            padding: 4rem 0 2rem;
+            margin-top: 6rem;
+            border-top: 3px solid var(--accent-gold);
+        }
+        
+        footer h5, footer h6 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.5px;
+            color: var(--pure-white);
+        }
+        
+        footer p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+        }
+        
+        footer a {
+            color: rgba(255, 255, 255, 0.8) !important;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        footer a:hover {
+            color: var(--accent-gold) !important;
+            transform: translateX(5px);
+        }
+        
+        footer .list-unstyled li {
+            margin-bottom: 0.7rem;
+        }
+        
+        /* Premium Button Styles */
+        .btn {
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border-radius: 50px;
+            padding: 0.85rem 2.5rem;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+            color: var(--pure-white);
+            box-shadow: 0 4px 15px rgba(124, 156, 191, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 156, 191, 0.4);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-blue) 100%);
+        }
+        
+        .btn-outline-primary {
+            background-color: transparent;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+            color: var(--pure-white);
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+        
+        .btn-light {
+            background-color: var(--pure-white);
+            color: var(--primary-dark);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-light:hover {
+            background-color: var(--accent-gold);
+            color: var(--pure-white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+        }
+        
+        .btn-outline-light {
+            background-color: transparent;
+            border: 2px solid var(--pure-white);
+            color: var(--pure-white);
+        }
+        
+        .btn-outline-light:hover {
+            background-color: var(--pure-white);
+            color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #c99a2e 100%);
+            color: var(--pure-white);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        
+        .btn-gradient:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+        }
+        
+        /* Alert Styles */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .alert-success {
+            background-color: #d1f4e0;
+            color: #0f5132;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #842029;
+        }
+        
+        .alert-info {
+            background-color: var(--light-blue);
+            color: var(--primary-dark);
+        }
+        
+        /* Badge Styles */
+        .badge {
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        
+        .badge.bg-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        }
+        
+        .badge.bg-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+        }
+        
+        /* Form Controls */
+        .form-control, .form-select {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 0.85rem 1.2rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--pure-white);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.25rem rgba(124, 156, 191, 0.15);
+            outline: none;
+            background-color: var(--pure-white);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+        }
+        
+        /* Dropdown Menu */
+        .dropdown-menu {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            background-color: var(--pure-white);
+        }
+        
+        .dropdown-item {
+            padding: 0.75rem 1.2rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            margin-bottom: 0.2rem;
+        }
+        
+        .dropdown-item:hover {
+            background-color: var(--light-blue);
+            color: var(--primary-dark);
+            transform: translateX(5px);
+        }
+        
+        .dropdown-item i {
+            margin-right: 0.6rem;
+            width: 1.2rem;
+            color: var(--primary-blue);
+        }
+        
+        .dropdown-divider {
+            margin: 0.5rem 0;
+            border-color: #e5e7eb;
+        }
+        
+        /* Spacing and Layout */
+        section {
+            margin-bottom: 5rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+        }
+        
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+        
+        hr {
+            border-color: rgba(124, 156, 191, 0.2);
+            opacity: 1;
+            margin: 2rem 0;
+        }
+        
+        /* Smooth Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 5rem 0 4rem;
+            }
+            
+            .hero-section h1 {
+                font-size: 2.5rem !important;
+            }
+            
+            .btn {
+                padding: 0.75rem 2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="bi bi-airplane"></i> Travel Planner
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}"><i class="bi bi-house-door"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'destinations:list' %}"><i class="bi bi-globe2"></i> Destinations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ai-assistant' %}">
+                            <i class="bi bi-magic"></i> AI Assistant
+                        </a>
+                    </li>
+                    
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'ai-planner' %}">
+                                <i class="bi bi-stars"></i> Planner
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'itineraries:list' %}"><i class="bi bi-journal-text"></i> My Trips</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'itineraries:create' %}"><i class="bi bi-plus-circle"></i> Create</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                {% if user.is_staff %}
+                                    <li><a class="dropdown-item" href="/admin/"><i class="bi bi-gear"></i> Admin Panel</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{% url 'users:logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users:login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users:signup' %}"><i class="bi bi-person-plus"></i> Sign Up</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="bi bi-airplane"></i> Travel Planner</h5>
+                    <p>Plan your perfect trip with ease. Explore destinations, check weather, and create detailed itineraries.</p>
+                </div>
+                <div class="col-md-3">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'home' %}" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="{% url 'destinations:list' %}" class="text-white text-decoration-none">Destinations</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'itineraries:list' %}" class="text-white text-decoration-none">My Itineraries</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6>Connect</h6>
+                    <p>
+                        <i class="bi bi-envelope"></i> info@travelplanner.com<br>
+                        <i class="bi bi-phone"></i> +91 1234567890
+                    </p>
+                </div>
+            </div>
+            <hr class="bg-white">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2026 Travel Planner. Built with Django & Bootstrap.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Travel Assistant - Travel Planner{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="bi bi-robot"></i> AI Travel Assistant
+        </h1>
+        <p class="lead text-muted mb-4">Get personalized travel recommendations powered by AI</p>
+        
+        <!-- Groq API Status Badge -->
+        {% if groq_status.available %}
+            <span class="badge bg-success"><i class="bi bi-check-circle"></i> AI Online - Groq API Ready</span>
+        {% else %}
+            <span class="badge bg-warning"><i class="bi bi-exclamation-triangle"></i> {{ groq_status.message }}</span>
+        {% endif %}
+    </div>
+
+    <div class="row g-4">
+        <!-- AI Query Form -->
+        <div class="col-lg-5">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-chat-dots"></i> Ask Your Travel Question</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">What type of travel are you looking for?</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="action" id="recommend" value="recommend" checked>
+                                <label class="btn btn-outline-primary" for="recommend">
+                                    <i class="bi bi-compass"></i> Recommendations
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="action" id="question" value="question">
+                                <label class="btn btn-outline-primary" for="question">
+                                    <i class="bi bi-question-circle"></i> Ask Question
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="query" class="form-label fw-bold">
+                                <i class="bi bi-pencil"></i> Your Query
+                            </label>
+                            <textarea 
+                                name="query" 
+                                id="query" 
+                                class="form-control" 
+                                rows="6" 
+                                placeholder="e.g., I want a beach destination with good food, budget-friendly for a week in summer..."
+                                required
+                            ></textarea>
+                            <small class="text-muted">Be specific about your preferences, budget, and interests!</small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-gradient w-100 py-3" {% if not groq_status.available %}disabled{% endif %}>
+                            <i class="bi bi-stars"></i> Get AI Recommendations
+                        </button>
+                    </form>
+                    
+                    <!-- Example Queries -->
+                    <div class="mt-4">
+                        <p class="text-muted small mb-2 fw-bold">Try asking:</p>
+                        <div class="d-flex flex-column gap-2">
+                            <button class="btn btn-sm btn-outline-secondary text-start" onclick="document.getElementById('query').value='Best romantic destinations for honeymoon in winter'">
+                                💑 Honeymoon spots
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary text-start" onclick="document.getElementById('query').value='Adventure destinations with trekking and water sports under 100000 INR'">
+                                🏔️ Adventure travel
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary text-start" onclick="document.getElementById('query').value='Family-friendly beach resorts with kids activities'">
+                                👨‍👩‍👧 Family vacation
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Response -->
+        <div class="col-lg-7">
+            {% if result %}
+                {% if result.success %}
+                    <div class="card h-100" style="border: 2px solid var(--primary-black); border-radius: 12px; background: var(--pure-white);">
+                        <div class="card-header d-flex justify-content-between align-items-center" style="background: var(--primary-black); color: var(--pure-white); border-bottom: 2px solid var(--primary-black); padding: 1.5rem;">
+                            <h5 class="mb-0" style="font-weight: 700;"><i class="bi bi-lightbulb-fill"></i> AI Recommendations</h5>
+                            <small><i class="bi bi-info-circle"></i> AI-generated</small>
+                        </div>
+                        <div class="card-body" style="padding: 2rem;">
+                            <div class="p-4" style="background-color: #f8f9fa; border: 1px solid var(--light-gray); border-radius: 8px; white-space: pre-wrap; font-family: 'Segoe UI', sans-serif; line-height: 1.8; color: var(--text-color);">
+                                {% if result.recommendations %}
+                                    {{ result.recommendations }}
+                                {% elif result.answer %}
+                                    {{ result.answer }}
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mt-4 d-flex justify-content-between align-items-center">
+                                <small style="color: var(--medium-gray);"><i class="bi bi-info-circle"></i> Generated by AI - Always verify information</small>
+                                <a href="{% url 'destinations:list' %}" class="btn" style="background: var(--primary-black); color: var(--pure-white); padding: 0.5rem 1.5rem; border-radius: 8px; text-decoration: none;">
+                                    <i class="bi bi-arrow-right"></i> Browse Destinations
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <!-- Placeholder -->
+                <div class="card" style="border: 2px solid var(--primary-black); border-radius: 12px; background: var(--pure-white);">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-4">
+                            <i class="bi bi-robot" style="font-size: 5rem; color: var(--primary-black); opacity: 0.2;"></i>
+                        </div>
+                        <h4 style="color: var(--text-color); font-weight: 700; margin-bottom: 1rem;">AI is Ready to Help!</h4>
+                        <p style="color: var(--medium-gray); font-size: 1.1rem;">
+                            Ask me anything about travel destinations, budgets, itineraries, or travel tips. 
+                            I'll provide personalized recommendations based on your preferences.
+                        </p>
+                        
+                        <div class="row mt-4 g-3">
+                            <div class="col-md-6">
+                                <div class="p-3" style="background: #f8f9fa; border: 1px solid var(--light-gray); border-radius: 8px;">
+                                    <i class="bi bi-geo-alt fs-3" style="color: var(--primary-black);"></i>
+                                    <h6 class="mt-2" style="color: var(--text-color); font-weight: 600;">Destination Discovery</h6>
+                                    <small style="color: var(--medium-gray);">Find perfect places based on your interests</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3" style="background: #f8f9fa; border: 1px solid var(--light-gray); border-radius: 8px;">
+                                    <i class="bi bi-calendar2-week fs-3" style="color: var(--primary-black);"></i>
+                                    <h6 class="mt-2" style="color: var(--text-color); font-weight: 600;">Itinerary Planning</h6>
+                                    <small style="color: var(--medium-gray);">Get day-by-day travel plans</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3" style="background: #f8f9fa; border: 1px solid var(--light-gray); border-radius: 8px;">
+                                    <i class="bi bi-cash-coin fs-3" style="color: var(--primary-black);"></i>
+                                    <h6 class="mt-2" style="color: var(--text-color); font-weight: 600;">Budget Advice</h6>
+                                    <small style="color: var(--medium-gray);">Plan within your budget</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3" style="background: #f8f9fa; border: 1px solid var(--light-gray); border-radius: 8px;">
+                                    <i class="bi bi-info-circle fs-3" style="color: var(--primary-black);"></i>
+                                    <h6 class="mt-2" style="color: var(--text-color); font-weight: 600;">Travel Tips</h6>
+                                    <small style="color: var(--medium-gray);">Expert advice and insights</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row mt-5 g-4">
+        <div class="col-md-6">
+            <div class="card h-100" style="border: 2px solid var(--primary-black); border-radius: 12px; background: var(--pure-white);">
+                <div class="card-body p-4">
+                    <h5 style="color: var(--text-color); font-weight: 700; margin-bottom: 1rem;">
+                        <i class="bi bi-stars" style="color: var(--primary-black);"></i> AI-Powered Itinerary Planner
+                    </h5>
+                    <p style="color: var(--medium-gray); margin-bottom: 1.5rem;">Create detailed day-by-day travel plans with AI assistance.</p>
+                    <a href="{% url 'ai-planner' %}" class="btn" style="background: var(--primary-black); color: var(--pure-white); padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none;">
+                        Try AI Planner <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100" style="border: 2px solid var(--primary-black); border-radius: 12px; background: var(--pure-white);">
+                <div class="card-body p-4">
+                    <h5 style="color: var(--text-color); font-weight: 700; margin-bottom: 1rem;">
+                        <i class="bi bi-globe" style="color: var(--primary-black);"></i> Explore Destinations
+                    </h5>
+                    <p style="color: var(--medium-gray); margin-bottom: 1.5rem;">Browse our curated list of amazing travel destinations worldwide.</p>
+                    <a href="{% url 'destinations:list' %}" class="btn" style="background: var(--primary-black); color: var(--pure-white); padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none;">
+                        View Destinations <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-gradient:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
+{% endblock %}

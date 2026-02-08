@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - Travel Planner{% endblock %}
+
+{% block content %}
+<div class="container my-5 py-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="mb-2">
+                <i class="bi bi-globe2"></i> {{ page_title }}
+            </h1>
+            <p class="text-muted fs-5 mb-0">Discover amazing places around the world</p>
+        </div>
+        {% if user.is_authenticated %}
+        <a href="{% url 'itineraries:create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Itinerary
+        </a>
+        {% endif %}
+    </div>
+
+    {% if destinations %}
+    <div class="row g-4">
+        {% for destination in destinations %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-pin-map-fill" style="color: var(--accent-gold);"></i> {{ destination.name }}
+                    </h5>
+                    <h6 class="card-subtitle mb-3 text-muted">
+                        <i class="bi bi-flag"></i> {{ destination.country }}
+                    </h6>
+                    <p class="card-text">
+                        {{ destination.description|truncatewords:30 }}
+                    </p>
+                    <div class="mb-3">
+                        <span class="badge bg-success me-2">
+                            <i class="bi bi-cash-coin"></i> ₹{{ destination.avg_budget|floatformat:0 }} avg
+                        </span>
+                        <span class="badge bg-warning">
+                            <i class="bi bi-sun"></i> {{ destination.best_season }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0 pb-3">
+                    <a href="{% url 'destinations:detail' destination.pk %}" class="btn btn-primary w-100">
+                        <i class="bi bi-eye"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center" role="alert">
+        <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
+        <h5>No destinations available yet</h5>
+        {% if user.is_staff %}
+        <a href="/admin/destinations/destination/add/" class="alert-link">Add destinations in admin panel</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
